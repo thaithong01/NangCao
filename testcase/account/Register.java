@@ -19,8 +19,8 @@ public class Register extends RegisterPageUI {
     @BeforeTest
 
     public void setup_open() {
-        System.setProperty("webdriver.gecko.driver", System.getProperty("user.dir") + "\\browserdrivers\\geckodriver.exe");
-        driver = new FirefoxDriver();
+        System.setProperty("webdriver.chromedriver", System.getProperty("user.dir") + "\\browserdrivers\\chromedriver.exe");
+        driver = new ChromeDriver();
         driver.manage().timeouts().implicitlyWait(30, TimeUnit.SECONDS);
         driver.manage().window().maximize();
     }
@@ -29,15 +29,28 @@ public class Register extends RegisterPageUI {
     public void RegisterWithEmptyData(){
         RegisterPageObject Page = new RegisterPageObject();
         Page.openUrl(driver, url);
+        Page.clickButton(driver, createAccountHeader);
         Page.clickButton(driver, registerButton);
-        Assert.assertEquals(Page.getErrorMessage(driver, firstNameErrorMessage),"This is a required field.");
-        Assert.assertEquals(Page.getErrorMessage(driver, emailErrorMessage),"This is a required field.");
-        Assert.assertEquals(Page.getErrorMessage(driver, passwordErrorMessage),"This is a required field.");
+
+        Assert.assertEquals(Page.getErrorMessage(driver, firstNameErrorMessage),"First name is required.");
+        Assert.assertEquals(Page.getErrorMessage(driver, lastNameErrorMessage),"Last name is required.");
+        Assert.assertEquals(Page.getErrorMessage(driver, emailErrorMessage),"Email is required.");
+        Assert.assertEquals(Page.getErrorMessage(driver, passwordErrorMessage),"Password is required.");
+        Assert.assertEquals(Page.getErrorMessage(driver, confirmPasswordErrorMessage),"Password is required.");
     }
 
     @Test
     public void RegisterWithInvalidEmail(){
+        RegisterPageObject Page = new RegisterPageObject();
+        Page.openUrl(driver, url);
+        Page.clickButton(driver, createAccountHeader);
+        Page.inputToElement(driver, txtFirstName, "Thong");
+        Page.inputToElement(driver, txtLastName, "Tran");
+        Page.inputToElement(driver, txtEmail, "thong");
+        Page.inputToElement(driver, txtPassword, "123456");
+        Page.inputToElement(driver, txtConfirmPassword, "123456");
 
+        Assert.assertEquals(Page.getErrorMessage(driver, emailErrorMessage), "Wrong email");
     }
 
     @AfterTest
